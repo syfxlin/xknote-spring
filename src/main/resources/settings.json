@@ -1,0 +1,45 @@
+{
+    "tinymce_setting": {
+        "skin_url": "/static/tinymce/skins/ui/oxide",
+        "body_class": "markdown-body",
+        "content_css": "/static/github-markdown.css"
+    },
+    "ace_setting": {
+        "theme": "ace/theme/solarized_light",
+        "keyboardHandler": null,
+        "fontSize": "17px",
+        "wrap": "free",
+        "cursorStyle": "ace",
+        "foldStyle": "markbegin",
+        "useSoftTabs": true,
+        "tabSize": 4,
+        "scrollPastEnd": 1,
+        "behavioursEnabled": true,
+        "selectionStyle": "line",
+        "highlightActiveLine": true,
+        "showInvisibles": false,
+        "displayIndentGuides": true,
+        "hScrollBarAlwaysVisible": false,
+        "vScrollBarAlwaysVisible": false,
+        "animatedScroll": false,
+        "showGutter": true,
+        "showLineNumbers": true,
+        "fixedWidthGutter": null,
+        "highlightSelectedWord": true,
+        "readOnly": false,
+        "copyWithEmptySelection": false,
+        "enableLiveAutocompletion": true,
+        "enableSnippets": true,
+        "enableBasicAutocompletion": true
+    },
+    "xk_setting": {
+        "previewCss": "/static/github-markdown.css",
+        "previewClass": "markdown-body",
+        "delayToHtml": 500,
+        "scrollBind": "both",
+        "pasteFormat": true,
+        "pasteImageUpload": true,
+        "enableTinyMCE": true,
+        "saveFormat": true
+    }
+}
