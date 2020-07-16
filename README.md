@@ -1,4 +1,4 @@
-# XK-Note
+# XK-Note(Spring Boot)
 
 **本项目是为了提交体验式实习课的课程设计而使用 Spring Boot 重写的，砍掉了很多功能。如果您要使用请使用 PHP 版本，Spring Boot 的版本不会进行维护。（因为 XK-Note 已经打算使用 Laravel-Swoole 重写，不过也有可能到时候改变了主意 2333）**
 
