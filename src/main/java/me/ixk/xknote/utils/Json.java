@@ -8,24 +8,30 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class JSON extends ObjectMapper {
+/**
+ * Json
+ *
+ * @author Otstar Lin
+ * @date 2020/11/17 下午 5:44
+ */
+public class Json extends ObjectMapper {
 
-    private JSON() {
+    private Json() {
         super();
         this.registerModule(new JavaTimeModule());
         this.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
-    public static JSON make() {
+    public static Json make() {
         return Inner.INSTANCE;
     }
 
-    public static JSON getInstance() {
+    public static Json getInstance() {
         return Inner.INSTANCE;
     }
 
     private static class Inner {
-        private static final JSON INSTANCE = new JSON();
+        private static final Json INSTANCE = new Json();
     }
 
     public static ObjectNode parseObject(String json) {
@@ -90,5 +96,13 @@ public class JSON extends ObjectMapper {
 
     public static ArrayNode convertToArrayNode(Object object) {
         return (ArrayNode) convertToNode(object);
+    }
+
+    public static <T> T convertToObject(JsonNode node, Class<T> type) {
+        try {
+            return make().treeToValue(node, type);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
     }
 }

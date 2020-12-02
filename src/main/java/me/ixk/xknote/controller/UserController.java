@@ -1,6 +1,8 @@
 package me.ixk.xknote.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.time.LocalDateTime;
+import javax.validation.Valid;
 import me.ixk.xknote.controller.param.ConfigParam;
 import me.ixk.xknote.controller.param.UserParam;
 import me.ixk.xknote.entity.UserConfig;
@@ -10,7 +12,7 @@ import me.ixk.xknote.security.UserDetailsImpl;
 import me.ixk.xknote.service.impl.UserConfigServiceImpl;
 import me.ixk.xknote.service.impl.UsersServiceImpl;
 import me.ixk.xknote.utils.Application;
-import me.ixk.xknote.utils.JSON;
+import me.ixk.xknote.utils.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +20,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/user")
@@ -39,13 +38,13 @@ public class UserController {
     public ResponseEntity<Object> getConfig() {
         Long id = Application.getCurrentUserId();
         UserConfig config = userConfigService.query().eq("uid", id).one();
-        ObjectNode objectNode = JSON.createObject();
+        ObjectNode objectNode = Json.createObject();
         objectNode.set(
             "tinymceSetting",
-            JSON.parseObject(config.getTinymceSetting())
+            Json.parseObject(config.getTinymceSetting())
         );
-        objectNode.set("aceSetting", JSON.parseObject(config.getAceSetting()));
-        objectNode.set("xkSetting", JSON.parseObject(config.getXkSetting()));
+        objectNode.set("aceSetting", Json.parseObject(config.getAceSetting()));
+        objectNode.set("xkSetting", Json.parseObject(config.getXkSetting()));
         return ResponseInfo.stdJson("config", objectNode);
     }
 

@@ -1,8 +1,7 @@
 package me.ixk.xknote.controller;
 
 import com.fasterxml.jackson.databind.node.BooleanNode;
-import me.ixk.xknote.controller.param.OldNewPathParam;
-import me.ixk.xknote.controller.param.PathParam;
+import me.ixk.xknote.annotation.JsonParam;
 import me.ixk.xknote.http.ResponseInfo;
 import me.ixk.xknote.service.impl.FolderServiceImpl;
 import me.ixk.xknote.service.impl.ReadMode;
@@ -37,8 +36,8 @@ public class FolderController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Object> create(@RequestBody PathParam path) {
-        int code = folderService.create(this.getPath(path.getPath()));
+    public ResponseEntity<Object> create(@JsonParam String path) {
+        int code = folderService.create(this.getPath(path));
         if (code == 409) {
             return ResponseInfo.stdError(
                 "The folder already exists.",
@@ -57,9 +56,12 @@ public class FolderController {
     }
 
     @PutMapping({ "", "/move", "/rename" })
-    public ResponseEntity<Object> move(@RequestBody OldNewPathParam path) {
-        String oldPath = this.getPath(path.getOldPath());
-        String newPath = this.getPath(path.getNewPath());
+    public ResponseEntity<Object> move(
+        @JsonParam(name = "old_path") String oldPath,
+        @JsonParam(name = "new_path") String newPath
+    ) {
+        oldPath = this.getPath(oldPath);
+        newPath = this.getPath(newPath);
         if ((oldPath + newPath).contains("../")) {
             return ResponseInfo.stdError(
                 "You submitted a restricted character. (../)",

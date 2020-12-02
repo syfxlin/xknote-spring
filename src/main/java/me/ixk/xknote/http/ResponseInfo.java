@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Data;
-import me.ixk.xknote.utils.JSON;
+import me.ixk.xknote.utils.Json;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -102,17 +102,17 @@ public class ResponseInfo {
     }
 
     public static ResponseEntity<Object> stdJson() {
-        ObjectNode objectNode = JSON.createObject();
+        ObjectNode objectNode = Json.createObject();
         objectNode.put("error", false);
         return ResponseEntity.ok(objectNode);
     }
 
     public static ResponseEntity<Object> stdJson(String name, Object object) {
-        return stdJson(name, JSON.convertToNode(object));
+        return stdJson(name, Json.convertToNode(object));
     }
 
     public static ResponseEntity<Object> stdJson(String name, JsonNode node) {
-        ObjectNode objectNode = JSON.createObject();
+        ObjectNode objectNode = Json.createObject();
         objectNode.put("error", false);
         objectNode.set(name, node);
         return ResponseEntity.ok(objectNode);
@@ -126,7 +126,7 @@ public class ResponseInfo {
         String message,
         HttpStatus status
     ) {
-        ObjectNode objectNode = JSON.createObject();
+        ObjectNode objectNode = Json.createObject();
         objectNode.put("error", message);
         return ResponseEntity.status(status).body(objectNode);
     }

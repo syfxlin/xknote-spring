@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.File;
 import java.util.regex.Pattern;
-import me.ixk.xknote.utils.JSON;
+import me.ixk.xknote.utils.Json;
 import me.ixk.xknote.utils.Storage;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +24,14 @@ public class FolderServiceImpl {
         if (mode == ReadMode.FLAT) {
             return this.getFlat(dir);
         }
-        ObjectNode result = JSON.createObject();
+        ObjectNode result = Json.createObject();
         for (File file : Storage.directories(dir)) {
-            ObjectNode item = JSON.createObject();
+            ObjectNode item = Json.createObject();
             item.put("type", "folder");
-            item.put("path", Storage.processPath(file));
+            item.put("path", Storage.path(file));
             item.put("name", file.getName());
-            item.set("sub", this.get(file.getPath(), false, mode));
-            if (checkGit && FileUtil.exist(file.getPath() + "/.git")) {
+            item.set("sub", this.get(FileUtil.normalize(dir + File.separator + file.getName()), false, mode));
+            if (checkGit && FileUtil.exist(file.getPath() + File.separator + ".git")) {
                 item.put("git", true);
             }
             result.set(file.getName(), item);
@@ -43,9 +43,9 @@ public class FolderServiceImpl {
             );
             for (File file : Storage.files(dir)) {
                 if (documentExtPreg.matcher(file.getName()).find()) {
-                    ObjectNode item = JSON.createObject();
+                    ObjectNode item = Json.createObject();
                     item.put("type", "note");
-                    item.put("path", Storage.processPath(file));
+                    item.put("path", Storage.path(file));
                     item.put("name", file.getName());
                     result.set(file.getName(), item);
                 }
@@ -55,8 +55,8 @@ public class FolderServiceImpl {
     }
 
     public JsonNode getFlat(String dir) {
-        return JSON.convertToNode(
-            Storage.processPath(Storage.allDirectories(dir))
+        return Json.convertToNode(
+            Storage.path(Storage.allDirectories(dir))
         );
     }
 

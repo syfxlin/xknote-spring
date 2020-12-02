@@ -51,6 +51,18 @@ public class MissingRequestParameterAdvice
                 HttpStatus.BAD_REQUEST
             );
         }
+        if ("old_path".equals(ex.getParameterName())) {
+            return ResponseInfo.stdError(
+                "Parameter not found. (old_path)",
+                HttpStatus.BAD_REQUEST
+            );
+        }
+        if ("new_path".equals(ex.getParameterName())) {
+            return ResponseInfo.stdError(
+                "Parameter not found. (new_path)",
+                HttpStatus.BAD_REQUEST
+            );
+        }
         return super.handleMissingServletRequestParameter(
             ex,
             headers,

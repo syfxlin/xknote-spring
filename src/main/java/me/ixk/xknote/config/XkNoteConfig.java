@@ -7,6 +7,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "xknote")
 @Data
-public class XknoteConfig {
+public class XkNoteConfig {
     private String storagePath;
 }

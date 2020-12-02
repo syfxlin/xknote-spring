@@ -8,7 +8,7 @@ import me.ixk.xknote.entity.Users;
 import me.ixk.xknote.http.RegisterUser;
 import me.ixk.xknote.service.impl.UserConfigServiceImpl;
 import me.ixk.xknote.service.impl.UsersServiceImpl;
-import me.ixk.xknote.utils.JSON;
+import me.ixk.xknote.utils.Json;
 import me.ixk.xknote.utils.Storage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,7 +60,7 @@ public class RegisterController {
             .query()
             .eq("username", user.getUsername())
             .one();
-        ObjectNode settings = JSON.parseObject(
+        ObjectNode settings = Json.parseObject(
             Storage.readFormClasspath("/settings.json")
         );
         UserConfig userConfig = UserConfig
@@ -71,6 +71,7 @@ public class RegisterController {
             .xkSetting(settings.get("xk_setting").toString())
             .build();
         userConfigService.save(userConfig);
+        Storage.makeDirectory("uid_" + newUser.getId());
         return "redirect:/login";
     }
 }

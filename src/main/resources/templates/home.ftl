@@ -72,11 +72,11 @@
 <script src="/js/vendor.js"></script>
 <script src="/js/app.js"></script>
 <script>
-  // if ('serviceWorker' in navigator) {
-  //   window.addEventListener('load', () => {
-  //     navigator.serviceWorker.register('/sw.js');
-  //   });
-  // }
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js');
+    });
+  }
 </script>
 </body>
 </html>

@@ -9,7 +9,7 @@ import me.ixk.xknote.entity.Config;
 import me.ixk.xknote.http.ResponseInfo;
 import me.ixk.xknote.service.impl.ConfigServiceImpl;
 import me.ixk.xknote.service.impl.UsersServiceImpl;
-import me.ixk.xknote.utils.JSON;
+import me.ixk.xknote.utils.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +48,7 @@ public class AdminController {
     @GetMapping("/conf")
     public ResponseEntity<Object> getConfig() {
         List<Config> configs = configService.list();
-        ObjectNode objectNode = JSON.createObject();
+        ObjectNode objectNode = Json.createObject();
         for (Config config : configs) {
             objectNode.put(config.getConfigName(), config.getConfigValue());
         }

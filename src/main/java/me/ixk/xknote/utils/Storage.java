@@ -2,7 +2,10 @@ package me.ixk.xknote.utils;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -12,50 +15,48 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import me.ixk.xknote.config.XknoteConfig;
+import me.ixk.xknote.config.XkNoteConfig;
+import me.ixk.xknote.exception.IllegalOperationDirectoryException;
 
 public class Storage {
 
-    private static String linkPath(String dir) {
-        String storagePath = Application
-            .getBean(XknoteConfig.class)
-            .getStoragePath();
-        if (FileUtil.isSub(new File(storagePath), new File(dir))) {
-            return dir;
-        } else if (dir.startsWith("/") || dir.startsWith("\\")) {
-            return storagePath + dir;
-        } else {
-            return storagePath + "/" + dir;
+    public static String link(final String path) {
+        String storagePath = FileUtil.normalize(
+            Application.getBean(XkNoteConfig.class).getStoragePath()
+        );
+        String processedPath = FileUtil.normalize(
+            storagePath + File.separator + path
+        );
+        if (!processedPath.startsWith(storagePath)) {
+            throw new IllegalOperationDirectoryException(path);
         }
+        return processedPath;
+    }
+
+    public static String path(File file) {
+        return path(file.getPath());
+    }
+
+    public static String path(String path) {
+        return FileUtil.normalize(path).replaceAll(".+/uid_\\d+", "");
+    }
+
+    public static List<String> path(List<File> list) {
+        return list.stream().map(Storage::path).collect(Collectors.toList());
+    }
+
+    public static Stream<String> path(Stream<File> stream) {
+        return stream.map(Storage::path);
     }
 
     public static Stream<File> dirStream(String dir) {
         return Arrays
-            .stream(FileUtil.ls(linkPath(dir)))
-            .filter(f -> f.isDirectory() && !f.getName().equals(".git"));
+            .stream(FileUtil.ls(link(dir)))
+            .filter(f -> f.isDirectory() && !".git".equals(f.getName()));
     }
 
-    public static Stream<File> fileStream(String dir) {
-        return Arrays.stream(FileUtil.ls(linkPath(dir))).filter(File::isFile);
-    }
-
-    public static String processPath(File file) {
-        return processPath(file.getPath());
-    }
-
-    public static String processPath(String path) {
-        return path.replace("\\", "/").replaceAll(".+/uid_\\d+", "");
-    }
-
-    public static List<String> processPath(List<File> list) {
-        return list
-            .stream()
-            .map(Storage::processPath)
-            .collect(Collectors.toList());
-    }
-
-    public static Stream<String> processPath(Stream<File> stream) {
-        return stream.map(Storage::processPath);
+    public static Stream<File> dirFile(String dir) {
+        return Arrays.stream(FileUtil.ls(link(dir))).filter(File::isFile);
     }
 
     public static List<File> directories(String dir) {
@@ -75,7 +76,7 @@ public class Storage {
     }
 
     public static List<File> files(String dir) {
-        return fileStream(dir).collect(Collectors.toList());
+        return dirFile(dir).collect(Collectors.toList());
     }
 
     public static List<File> allFiles(String dir) {
@@ -84,7 +85,7 @@ public class Storage {
         }
         List<File> list = new LinkedList<>();
         Arrays
-            .stream(FileUtil.ls(linkPath(dir)))
+            .stream(FileUtil.ls(link(dir)))
             .forEach(
                 file -> {
                     list.add(file);
@@ -106,93 +107,43 @@ public class Storage {
     }
 
     public static boolean exist(String path) {
-        return FileUtil.exist(linkPath(path));
+        return FileUtil.exist(link(path));
     }
 
     public static File makeDirectory(String path) {
-        return FileUtil.mkdir(linkPath(path));
+        return FileUtil.mkdir(link(path));
     }
 
     public static boolean deleteDirectory(String path) {
-        return FileUtil.del(linkPath(path));
+        return FileUtil.del(link(path));
     }
 
     public static void move(String oldPath, String newPath) {
         FileUtil.move(
-            FileUtil.file(linkPath(oldPath)),
-            FileUtil.file(linkPath(newPath)),
+            FileUtil.file(link(oldPath)),
+            FileUtil.file(link(newPath)),
             true
         );
     }
 
     public static String get(String path) {
-        return FileUtil.readUtf8String(linkPath(path));
+        return FileUtil.readUtf8String(link(path));
     }
 
     public static File put(String path, String content) {
-        return FileUtil.writeUtf8String(content, linkPath(path));
+        return FileUtil.writeUtf8String(content, link(path));
     }
 
     public static boolean delete(String path) {
-        return FileUtil.del(linkPath(path));
+        return FileUtil.del(link(path));
     }
 
     public static File putFile(byte[] bytes, String path) {
-        return FileUtil.writeBytes(bytes, linkPath(path));
+        return FileUtil.writeBytes(bytes, link(path));
     }
 
     public static byte[] getFile(String path) {
-        return FileUtil.readBytes(linkPath(path));
-    }
-
-    public static void folder2zip(String path, String zippath, String zipname) {
-        File src = new File(path);
-        ZipOutputStream zos = null;
-
-        if (!src.exists() || !src.isDirectory()) {
-            // 源目录不存在 或不是目录 , 则异常
-            throw new RuntimeException("压缩源目录不存在或非目录!" + path);
-        }
-
-        File destdir = new File(zippath);
-
-        if (!destdir.exists()) {
-            // 创建目录
-            destdir.mkdirs();
-        }
-
-        File zipfile = new File(zippath + File.separator + zipname);
-
-        File[] srclist = src.listFiles();
-
-        if (srclist == null || srclist.length == 0) {
-            // 源目录内容为空,无需压缩
-            throw new RuntimeException("源目录内容为空,无需压缩下载!" + path);
-        }
-
-        try {
-            zos =
-                new ZipOutputStream(
-                    new BufferedOutputStream(new FileOutputStream(zipfile))
-                );
-
-            // 递归压缩目录下所有的文件  ;
-            compress(zos, src, src.getName());
-
-            zos.close();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("压缩目标文件不存在!" + e.getMessage());
-        } catch (IOException e) {
-            throw new RuntimeException("压缩文件IO异常!" + e.getMessage());
-        } finally {
-            if (zos != null) {
-                try {
-                    zos.close();
-                } catch (Exception e2) {
-                    // TODO: handle exception
-                }
-            }
-        }
+        return FileUtil.readBytes(link(path));
     }
 
     private static void compress(ZipOutputStream zos, File src, String name)

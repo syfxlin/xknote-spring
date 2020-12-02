@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import me.ixk.xknote.http.ResponseInfo;
 import me.ixk.xknote.service.impl.ConfigServiceImpl;
 import me.ixk.xknote.utils.Application;
-import me.ixk.xknote.utils.JSON;
+import me.ixk.xknote.utils.Json;
 import me.ixk.xknote.utils.Storage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -48,7 +48,7 @@ public class ImageController {
     @PostMapping("")
     public ObjectNode upload(@RequestParam(name = "file") MultipartFile file)
         throws IOException {
-        ObjectNode result = JSON.createObject();
+        ObjectNode result = Json.createObject();
         String path = "/" + UUID.fastUUID().toString();
         Storage.putFile(file.getBytes(), getPath(path));
         result.put("error", true);

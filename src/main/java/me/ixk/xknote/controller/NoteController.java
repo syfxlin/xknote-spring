@@ -2,9 +2,10 @@ package me.ixk.xknote.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
+import java.util.regex.Pattern;
+import me.ixk.xknote.annotation.JsonParam;
 import me.ixk.xknote.controller.param.CheckList;
 import me.ixk.xknote.controller.param.NoteItem;
-import me.ixk.xknote.controller.param.OldNewPathParam;
 import me.ixk.xknote.http.ResponseInfo;
 import me.ixk.xknote.service.impl.NoteServiceImpl;
 import me.ixk.xknote.utils.Application;
@@ -13,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -76,16 +75,19 @@ public class NoteController {
     }
 
     @PutMapping({ "/rename", "/move" })
-    public ResponseEntity<Object> move(@RequestBody OldNewPathParam path) {
-        String oldPath = this.getPath(path.getOldPath());
-        String newPath = this.getPath(path.getNewPath());
+    public ResponseEntity<Object> move(
+        @JsonParam(name = "old_path") String oldPath,
+        @JsonParam(name = "new_path") String newPath
+    ) {
+        oldPath = this.getPath(oldPath);
+        newPath = this.getPath(newPath);
         if ((oldPath + newPath).contains("../")) {
             return ResponseInfo.stdError(
                 "You submitted a restricted character. (../)",
                 HttpStatus.BAD_REQUEST
             );
         }
-        if (!Pattern.matches(".+\\.(md|txt)$", path.getNewPath())) {
+        if (!Pattern.matches(".+\\.(md|txt)$", newPath)) {
             return ResponseInfo.stdError(
                 "Parameter error. (path)",
                 HttpStatus.BAD_REQUEST
