@@ -8,5 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "xknote")
 @Data
 public class XkNoteConfig {
+
     private String storagePath;
+    private String key;
 }
