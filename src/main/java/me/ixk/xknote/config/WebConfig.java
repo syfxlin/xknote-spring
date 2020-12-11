@@ -15,10 +15,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    /**
+     * 添加参数解析器
+     *
+     * @param resolvers 解析器
+     */
     @Override
     public void addArgumentResolvers(
-        List< HandlerMethodArgumentResolver > resolvers
+        List<HandlerMethodArgumentResolver> resolvers
     ) {
+        // 添加 Json 解析器
         resolvers.add(new JsonArgumentResolver());
     }
 }

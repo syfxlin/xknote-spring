@@ -18,10 +18,16 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
+/**
+ * Web 安全配置
+ *
+ * @author Otstar Lin
+ * @date 2020/12/11 上午 10:12
+ */
 @Configuration
-// 开启注解支持
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
     private UserDetailService userDetailService;
 
@@ -73,6 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     public static class ClassPathTldsLoader {
+
         @Autowired
         private FreeMarkerConfigurer freeMarkerConfigurer;
 

@@ -16,15 +16,35 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * 图片控制器
+ *
+ * @author Otstar Lin
+ * @date 2020/12/11 上午 10:03
+ */
 @RestController
 @RequestMapping("/api/images")
 public class ImageController {
+
     @Autowired
     ConfigServiceImpl configService;
 
+    /**
+     * 获取图片
+     *
+     * @param imageId 图片 ID
+     *
+     * @return 图片字节流
+     */
     @GetMapping(value = "/{imageId}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> getImage(
         @PathVariable("imageId") String imageId
@@ -35,6 +55,11 @@ public class ImageController {
         return new ResponseEntity<>(imageContent, headers, HttpStatus.OK);
     }
 
+    /**
+     * 获取所有图片信息
+     *
+     * @return 图片信息
+     */
     @GetMapping("/all")
     public ResponseEntity<Object> getAll() {
         List<File> files = Storage.allFiles(getPath(""));
@@ -45,6 +70,14 @@ public class ImageController {
         return ResponseInfo.stdJson("images", list);
     }
 
+    /**
+     * 图片上传
+     *
+     * @param file 文件
+     *
+     * @return 图片信息
+     * @throws IOException IO 异常
+     */
     @PostMapping("")
     public ObjectNode upload(@RequestParam(name = "file") MultipartFile file)
         throws IOException {
@@ -56,6 +89,13 @@ public class ImageController {
         return result;
     }
 
+    /**
+     * 删除图片
+     *
+     * @param name 路径
+     *
+     * @return 是否删除成功
+     */
     @DeleteMapping("")
     public ResponseEntity<Object> delete(
         @RequestParam(name = "name") String name

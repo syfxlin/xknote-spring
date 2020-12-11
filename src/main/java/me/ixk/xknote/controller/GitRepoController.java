@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import me.ixk.xknote.annotation.JsonParam;
 import me.ixk.xknote.entity.GitConfig;
 import me.ixk.xknote.entity.GitUserInfo;
@@ -25,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * Git 仓库操作
+ *
  * @author Otstar Lin
  * @date 2020/12/2 下午 8:10
  */
@@ -36,6 +39,18 @@ public class GitRepoController {
     @Autowired
     GitRepoServiceImpl gitRepoService;
 
+    /**
+     * Git init 或 clone
+     *
+     * @param path        相对路径
+     * @param repo        仓库 remote 地址
+     * @param initOrClone init 或 clone
+     * @param gitName     Git 用户名
+     * @param gitPassword Git 密码
+     * @param gitEmail    Git 邮箱
+     *
+     * @return 是否成功
+     */
     @PostMapping
     public ResponseEntity<Object> initClone(
         @JsonParam(name = "path") String path,
@@ -77,6 +92,13 @@ public class GitRepoController {
         return ResponseInfo.stdJson();
     }
 
+    /**
+     * Git pull
+     *
+     * @param path 路径
+     *
+     * @return 是否成功
+     */
     @GetMapping
     public ResponseEntity<Object> pull(
         @RequestParam(name = "path") String path
@@ -92,6 +114,14 @@ public class GitRepoController {
         return ResponseInfo.stdJson();
     }
 
+    /**
+     * Git push
+     *
+     * @param path  路径
+     * @param force 是否强制推送
+     *
+     * @return 是否成功
+     */
     @PutMapping
     public ResponseEntity<Object> push(
         @JsonParam(name = "path") String path,
@@ -111,6 +141,13 @@ public class GitRepoController {
         return ResponseInfo.stdJson();
     }
 
+    /**
+     * 获取当前仓库配置
+     *
+     * @param path 路径
+     *
+     * @return 当前仓库配置
+     */
     @GetMapping("/conf")
     public ResponseEntity<Object> getConfig(
         @RequestParam(name = "path") String path
@@ -132,6 +169,17 @@ public class GitRepoController {
         return ResponseInfo.stdJson("config", config);
     }
 
+    /**
+     * 设置当前仓库配置
+     *
+     * @param path        路径
+     * @param repo        仓库 remote 地址
+     * @param gitName     Git 用户名
+     * @param gitPassword Git 密码
+     * @param gitEmail    Git 邮箱
+     *
+     * @return 是否成功
+     */
     @PutMapping("/conf")
     public ResponseEntity<Object> setConfig(
         @JsonParam(name = "path") String path,
@@ -160,6 +208,14 @@ public class GitRepoController {
         return ResponseInfo.stdJson();
     }
 
+    /**
+     * commit 日志
+     *
+     * @param path 路径
+     * @param file 文件
+     *
+     * @return 指定文件或全局 commit 日志
+     */
     @GetMapping("/log")
     public ResponseEntity<Object> log(
         @RequestParam(name = "path") String path,
@@ -192,6 +248,15 @@ public class GitRepoController {
         return ResponseInfo.stdJson("logs", node);
     }
 
+    /**
+     * 历史变更对比
+     *
+     * @param path   路径
+     * @param commit commit hash
+     * @param file   文件
+     *
+     * @return 获取文件或全局的历史变更
+     */
     @GetMapping("/diff")
     public ResponseEntity<Object> diff(
         @RequestParam(name = "path") String path,
@@ -211,6 +276,15 @@ public class GitRepoController {
         );
     }
 
+    /**
+     * 回滚
+     *
+     * @param path   路径
+     * @param commit commit hash
+     * @param file   文件
+     *
+     * @return 是否回滚成功
+     */
     @PostMapping("/rollback")
     public ResponseEntity<Object> rollback(
         @JsonParam(name = "path") String path,
@@ -228,7 +302,13 @@ public class GitRepoController {
         return ResponseInfo.stdJson();
     }
 
-    // TODO: 显示错误
+    /**
+     * 仓库变更状态
+     *
+     * @param path 路径
+     *
+     * @return 当前仓库变更状态
+     */
     @GetMapping("/status")
     public ResponseEntity<Object> status(
         @RequestParam(name = "path") String path
@@ -240,10 +320,17 @@ public class GitRepoController {
                 HttpStatus.NOT_FOUND
             );
         }
-        final String status = gitRepoService.status(path, id);
+        final List<String> status = gitRepoService.status(path, id);
         return ResponseInfo.stdJson("status", status);
     }
 
+    /**
+     * 获取全局历史更改
+     *
+     * @param path 路径
+     *
+     * @return 历史更改
+     */
     @GetMapping("/diff/all")
     public ResponseEntity<Object> allDiff(
         @RequestParam(name = "path") String path

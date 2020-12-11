@@ -7,7 +7,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 
+/**
+ * 用户描述对象
+ *
+ * @author Otstar Lin
+ * @date 2020/12/11 上午 10:12
+ */
 public class UserDetailsImpl extends User {
+
     private final Users users;
 
     public UserDetailsImpl(Users users, String authorities) {

@@ -18,20 +18,22 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 /**
- * JsonArgumentResolver
+ * Json 格式参数解析器
  *
  * @author Otstar Lin
  * @date 2020/11/17 下午 5:47
  */
 public class JsonArgumentResolver implements HandlerMethodArgumentResolver {
-    private static final String JSON_REQUEST_ATTRIBUTE_NAME = "JSON_REQUEST_BODY";
+
+    private static final String JSON_REQUEST_ATTRIBUTE_NAME =
+        "JSON_REQUEST_BODY";
     private static final String BODY_VALUE_NAME = "&BODY";
 
     @Override
     public boolean supportsParameter(final MethodParameter methodParameter) {
         return (
             methodParameter.hasParameterAnnotation(JsonParam.class) ||
-                methodParameter.hasMethodAnnotation(RequestJson.class)
+            methodParameter.hasMethodAnnotation(RequestJson.class)
         );
     }
 
@@ -41,11 +43,13 @@ public class JsonArgumentResolver implements HandlerMethodArgumentResolver {
         final ModelAndViewContainer modelAndViewContainer,
         final NativeWebRequest nativeWebRequest,
         final WebDataBinderFactory webDataBinderFactory
-    )
-        throws Exception {
+    ) throws Exception {
         final JsonNode body = this.getJsonBody(nativeWebRequest);
         if (BODY_VALUE_NAME.equals(methodParameter.getParameterName())) {
-            return Json.convertToObject(body, methodParameter.getParameterType());
+            return Json.convertToObject(
+                body,
+                methodParameter.getParameterType()
+            );
         }
         final JsonParam jsonParam = methodParameter.getParameterAnnotation(
             JsonParam.class

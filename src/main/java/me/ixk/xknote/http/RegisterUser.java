@@ -8,8 +8,15 @@ import lombok.Data;
 import me.ixk.xknote.service.impl.UsersServiceImpl;
 import me.ixk.xknote.utils.Application;
 
+/**
+ * 注册用户对象
+ *
+ * @author Otstar Lin
+ * @date 2020/12/11 上午 10:11
+ */
 @Data
 public class RegisterUser {
+
     @NotNull
     @Size(min = 2, max = 50)
     private String username;

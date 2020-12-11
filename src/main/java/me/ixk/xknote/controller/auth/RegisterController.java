@@ -19,8 +19,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+/**
+ * 注册控制器
+ *
+ * @author Otstar Lin
+ * @date 2020/12/4 下午 1:14
+ */
 @Controller
 public class RegisterController {
+
     @Autowired
     UsersServiceImpl usersService;
 
@@ -30,15 +37,30 @@ public class RegisterController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    /**
+     * 注册页
+     *
+     * @param registerUser 注册的用户信息
+     *
+     * @return 注册页位置
+     */
     @GetMapping("/register")
     @PreAuthorize("isAnonymous()")
     public String index(RegisterUser registerUser) {
         return "register";
     }
 
+    /**
+     * 注册
+     *
+     * @param registerUser 注册用户信息
+     * @param result       验证信息
+     *
+     * @return 跳转 URL
+     */
     @PostMapping("/register")
     @PreAuthorize("isAnonymous()")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String register(
         @Valid RegisterUser registerUser,
         BindingResult result
@@ -55,11 +77,13 @@ public class RegisterController {
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
             .build();
+        // 新建用户
         usersService.save(user);
         Users newUser = usersService
             .query()
             .eq("username", user.getUsername())
             .one();
+        // 读取默认配置
         ObjectNode settings = Json.parseObject(
             Storage.readFormClasspath("/settings.json")
         );
@@ -70,7 +94,9 @@ public class RegisterController {
             .aceSetting(settings.get("ace_setting").toString())
             .xkSetting(settings.get("xk_setting").toString())
             .build();
+        // 存储默认配置
         userConfigService.save(userConfig);
+        // 创建用户对应文件夹
         Storage.makeDirectory("uid_" + newUser.getId());
         return "redirect:/login";
     }

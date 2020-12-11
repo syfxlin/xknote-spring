@@ -11,6 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * 响应对象
+ *
+ * @author Otstar Lin
+ * @date 2020/12/11 上午 10:11
+ */
 @Data
 public class ResponseInfo {
 

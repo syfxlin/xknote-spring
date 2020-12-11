@@ -8,9 +8,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-// 为 Spring Security 提供用户信息
+/**
+ * 为 Spring Security 提供用户信息
+ *
+ * @author Otstar Lin
+ * @date 2020/12/11 上午 10:12
+ */
 @Configuration
 public class UserDetailService implements UserDetailsService {
+
     @Autowired
     private UsersServiceImpl usersService;
 

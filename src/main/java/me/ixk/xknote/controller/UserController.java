@@ -19,12 +19,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 用户控制器
+ *
+ * @author Otstar Lin
+ * @date 2020/12/11 上午 10:07
+ */
 @RestController
 @RequestMapping("/api/user")
 @PreAuthorize("isAuthenticated()")
 public class UserController {
+
     @Autowired
     UserConfigServiceImpl userConfigService;
 
@@ -34,6 +45,11 @@ public class UserController {
     @Autowired
     UsersServiceImpl usersService;
 
+    /**
+     * 获取用户配置
+     *
+     * @return 用户配置
+     */
     @GetMapping("/conf")
     public ResponseEntity<Object> getConfig() {
         Long id = Application.getCurrentUserId();
@@ -48,6 +64,13 @@ public class UserController {
         return ResponseInfo.stdJson("config", objectNode);
     }
 
+    /**
+     * 设置用户配置
+     *
+     * @param config 用户配置
+     *
+     * @return 正常返回
+     */
     @PutMapping("/conf")
     public ResponseEntity<Object> setConfig(@RequestBody ConfigParam config) {
         Long id = Application.getCurrentUserId();
@@ -59,6 +82,11 @@ public class UserController {
         return ResponseInfo.stdJson();
     }
 
+    /**
+     * 获取用户信息
+     *
+     * @return 用户信息
+     */
     @GetMapping("")
     public ResponseEntity<Object> get() {
         UserDetailsImpl userDetails = Application.getCurrentUser();
@@ -68,6 +96,14 @@ public class UserController {
         return ResponseInfo.stdJson("user", userDetails.getUsers());
     }
 
+    /**
+     * 修改用户信息
+     *
+     * @param user   用户信息
+     * @param result 验证信息
+     *
+     * @return 修改后的用户信息
+     */
     @PutMapping("")
     public ResponseEntity<Object> edit(
         @Valid @RequestBody UserParam user,
@@ -100,5 +136,4 @@ public class UserController {
         usersService.updateById(users);
         return ResponseInfo.stdJson("user", users);
     }
-
 }

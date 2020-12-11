@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * Git 信息控制器
+ *
  * @author Otstar Lin
  * @date 2020/12/3 下午 10:45
  */
@@ -29,6 +31,11 @@ public class GitInfoController {
     @Autowired
     Crypt crypt;
 
+    /**
+     * 获取全局 Git 配置
+     *
+     * @return 配置信息
+     */
     @GetMapping("/git")
     public ResponseEntity<Object> getConfig() {
         final Long id = Application.getCurrentUserId();
@@ -42,6 +49,15 @@ public class GitInfoController {
         return ResponseInfo.stdJson("config", info);
     }
 
+    /**
+     * 设置全局 Git 信息
+     *
+     * @param gitName     Git 用户名
+     * @param gitPassword Git 密码
+     * @param gitEmail    Git 邮箱
+     *
+     * @return 是否成功
+     */
     @PostMapping("/git")
     public ResponseEntity<Object> setConfig(
         @JsonParam(name = "git_name") String gitName,

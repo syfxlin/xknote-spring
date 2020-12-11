@@ -2,6 +2,8 @@ package me.ixk.xknote.service.impl;
 
 import cn.hutool.core.io.FileUtil;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import me.ixk.xknote.entity.GitConfig;
 import me.ixk.xknote.entity.GitInfo;
 import me.ixk.xknote.entity.GitUserInfo;
@@ -172,38 +174,38 @@ public class GitRepoServiceImpl {
         return GitUtil.rollback(git, commit, filePath);
     }
 
-    public String status(String path, long id) {
+    public List<String> status(String path, long id) {
         final Git git = GitUtil.open(getPath(path, id));
         final Status status = GitUtil.status(git);
-        StringBuilder builder = new StringBuilder();
+        List<String> list = new ArrayList<>();
         for (String name : status.getAdded()) {
-            builder.append("Added: ").append(name).append("\n");
+            list.add("Added: " + name);
         }
         for (String name : status.getChanged()) {
-            builder.append("Changed: ").append(name).append("\n");
+            list.add("Changed: " + name);
         }
         for (String name : status.getConflicting()) {
-            builder.append("Conflicting: ").append(name).append("\n");
+            list.add("Conflicting: " + name);
         }
         for (String index : status.getIgnoredNotInIndex()) {
-            builder.append("IgnoredNotInIndex: ").append(index).append("\n");
+            list.add("IgnoredNotInIndex: " + index);
         }
         for (String name : status.getMissing()) {
-            builder.append("Missing: ").append(name).append("\n");
+            list.add("Missing: " + name);
         }
         for (String name : status.getModified()) {
-            builder.append("Modified: ").append(name).append("\n");
+            list.add("Modified: " + name);
         }
         for (String name : status.getRemoved()) {
-            builder.append("Removed: ").append(name).append("\n");
+            list.add("Removed: " + name);
         }
         for (String name : status.getUntracked()) {
-            builder.append("Untracked: ").append(name).append("\n");
+            list.add("Untracked: " + name);
         }
         for (String name : status.getUntrackedFolders()) {
-            builder.append("UntrackedFolders: ").append(name).append("\n");
+            list.add("UntrackedFolders: " + name);
         }
-        return builder.toString();
+        return list;
     }
 
     private File getPath(String path, long id) {
